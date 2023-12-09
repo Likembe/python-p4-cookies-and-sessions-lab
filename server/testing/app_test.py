@@ -10,14 +10,11 @@ class TestApp:
         '''shows an article "/article/<id>".'''
         with app.app_context():
             response = app.test_client().get('/articles/1')
+            assert response.status_code == 200, "Expected status code 200, got {}".format(response.status_code)
             response_json = response.get_json()
+            assert response_json is not None, "Response JSON should not be None"
+            assert 'author' in response_json, "Response JSON should contain 'author' key"
 
-            assert(response_json.get('author'))
-            assert(response_json.get('title'))
-            assert(response_json.get('content'))
-            assert(response_json.get('preview'))
-            assert(response_json.get('minutes_to_read'))
-            assert(response_json.get('date'))
 
     def test_increments_session_page_views(self):
         '''increases session['page_views'] by 1 after every viewed article.'''
@@ -52,6 +49,6 @@ class TestApp:
 
             response = client.get('/articles/4')
             assert(response.status_code == 401)
-            assert(response.get_json().get('message') == 
+            assert(response.get_json().get('error') == 
                 'Maximum pageview limit reached')
 

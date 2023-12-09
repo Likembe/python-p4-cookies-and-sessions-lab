@@ -21,8 +21,24 @@ class Article(db.Model, SerializerMixin):
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
+
+    def get_article_data(self):
+        return {
+            'id': self.id,
+            'title': self.title,
+            'author': self.author,
+            'content': self.content,
+            'minutes_to_read': self.minutes_to_read,
+            'date': self.date
+        
+        }
+
+
     def __repr__(self):
         return f'Article {self.id} by {self.author}'
+    
+
+
 
 class User(db.Model, SerializerMixin):
     __tablename__ = 'users'

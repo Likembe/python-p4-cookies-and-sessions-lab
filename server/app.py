@@ -5,6 +5,7 @@ from flask_migrate import Migrate
 
 from models import db, Article, User
 
+
 app = Flask(__name__)
 app.secret_key = b'Y\xf1Xz\x00\xad|eQ\x80t \xca\x1a\x10K'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
@@ -27,8 +28,16 @@ def index_articles():
 
 @app.route('/articles/<int:id>')
 def show_article(id):
+    session['page_views'] = session.get('page_views', 0) + 1
 
-    pass
+    if session['page_views'] > 3:
+        return jsonify({'error': 'Maximum pageview limit reached'}), 401
+        
+    article = Article.query.get(id)
+    if article is None:
+        return jsonify({'error': 'Article not found'}), 404
+    return jsonify(article.get_article_data())
+    
 
 if __name__ == '__main__':
     app.run(port=5555)
